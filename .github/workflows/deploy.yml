@@ -1,29 +1,24 @@
-name: Deploy Website to S3
+name: Deploy Static Website to S3
 
 on:
   push:
     branches:
-      - main  # Change to 'master' if your default branch uses the older standard
+    - main
+  workflow_dispatch:
+    branches:
+    - main
 
 jobs:
-  deploy:
+  deploy-site:
     runs-on: ubuntu-latest
-
     steps:
-    # 1. Checkout the repository files
-    - name: Checkout Code
-      uses: actions/checkout@v4
-
-    # 2. Authenticate using GitHub Repository Secrets
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
-
-    # 3. Synchronize the local repository root directly to the S3 bucket root
-    # --exclude "*" followed by --include "index.html" ensures ONLY index.html is targeted
-    - name: Deploy index.html to S3 Root
-      run: |
-        aws s3 cp index.html s3://cmtr-d708a6a9-bucket-1792730023/index.html
+      - uses: actions/checkout@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        name: Configure AWS Credentials
+        with:
+          aws-s3-bucket: ${{ secrets.S3_BUCKET }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Upload file to S3 bucket
+        run: aws s3 cp index.html s3://${{ secrets.S3_BUCKET }}
