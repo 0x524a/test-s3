@@ -26,4 +26,4 @@ jobs:
     # --exclude "*" followed by --include "index.html" ensures ONLY index.html is targeted
     - name: Deploy index.html to S3 Root
       run: |
-        aws s3 sync . s3://cmtr-d708a6a9-bucket-1792730023 --exclude "*" --include "index.html"
+        aws s3 sync index.html s3://cmtr-d708a6a9-bucket-1792730023/index.html
